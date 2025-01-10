@@ -5,15 +5,14 @@ const generateButton = document.getElementById("hopecore-link");
 
 // GitHub raw paths for images
 const regularImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/hc";
-const specialImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/daily-reminder-that-you-will-have-this";
-
-https://github.com/gymney/hopecore/tree/main/assets
+const specialImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/daily-reminder-that-you-will-have_this";
 
 // Function to fetch and parse the quotes file
 async function getQuotes() {
     try {
         console.log("Fetching quotes...");
-        const response = await fetch("./assets/quotes.txt");
+        const response = await fetch("./assets/quotes.txt"); // Adjust path if needed
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const text = await response.text();
         console.log("Quotes fetched successfully!");
         return text.split("\n").filter((line) => line.trim() !== "");
@@ -23,11 +22,40 @@ async function getQuotes() {
     }
 }
 
-// Function to get a random image URL from a GitHub folder
-function getRandomImage(folderPath) {
-    // Random image name generation for dynamic selection
-    const randomIndex = Math.floor(Math.random() * 10); // Adjust based on your folder content
-    const imageName = `image${randomIndex + 1}.jpg`; // Example: image1.jpg, image2.jpg, etc.
+// Function to get a random image URL from a GitHub folder (with dynamic filenames)
+async function getImageFilenamesFromGitHub(folderPath) {
+    // Extract the relative path to the GitHub folder
+    const relativePath = folderPath.replace('https://raw.githubusercontent.com/gymney/hopecore/main/', '');
+    const apiUrl = `https://api.github.com/repos/gymney/hopecore/contents/${relativePath}`;
+    try {
+        const response = await fetch(apiUrl);
+        const files = await response.json();
+
+        console.log("GitHub API Response:", files); // Debugging log to inspect API response
+
+        const imageFilenames = files
+            .filter(file => {
+                // Handling both .png and .PNG by checking the extension regardless of case
+                return file.name.toLowerCase().endsWith('.png');
+            })
+            .map(file => file.name);
+        console.log("Fetched image filenames:", imageFilenames);
+        return imageFilenames;
+    } catch (error) {
+        console.error("Error fetching image filenames:", error);
+        return [];
+    }
+}
+
+// Function to get a random image
+async function getRandomImage(folderPath) {
+    const imageFilenames = await getImageFilenamesFromGitHub(folderPath);
+    if (imageFilenames.length === 0) {
+        console.error("No images found!");
+        return "";
+    }
+    const randomIndex = Math.floor(Math.random() * imageFilenames.length);
+    const imageName = imageFilenames[randomIndex];
     console.log("Generated random image name:", imageName);
     return `${folderPath}/${imageName}`;
 }
@@ -53,7 +81,9 @@ async function generateHopecore() {
 
         // Get a random image URL
         const folderPath = isSpecialQuote ? specialImagePath : regularImagePath;
-        const imageUrl = getRandomImage(folderPath);
+        const imageUrl = await getRandomImage(folderPath);
+        if (!imageUrl) return; // Exit if no image URL is generated
+
         console.log("Random image URL:", imageUrl);
 
         // Create and display the image and quote
@@ -81,4 +111,8 @@ async function generateHopecore() {
 }
 
 // Attach the event listener
-generateButton.addEventListener("click", generateHopecore);
+if (generateButton) {
+    generateButton.addEventListener("click", generateHopecore);
+} else {
+    console.error("Generate button not found!");
+}
