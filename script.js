@@ -5,7 +5,7 @@ const generateButton = document.getElementById("hopecore-link");
 
 // GitHub raw paths for images
 const regularImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/hc";
-const specialImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/daily-reminder-that-you-will-have_this";
+const specialImagePath = "https://raw.githubusercontent.com/gymney/hopecore/main/assets/daily-reminder-that-you-will-have-this";
 
 // Function to fetch and parse the quotes file
 async function getQuotes() {
