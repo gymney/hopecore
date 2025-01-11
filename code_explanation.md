@@ -1,6 +1,6 @@
 # Hopecore Bot Demo
 
-Welcome to the **Hopecore Bot Demo**! This project generates inspirational quotes paired with matching images for the intent of mirroring the functionality of the [hopecore bot](README.md) I created. It's designed to showcase simple yet effective use of HTML, CSS, and JavaScript for creating dynamic and interactive web applications.
+Welcome to the **Hopecore Bot Demo**! This project generates inspirational quotes paired with matching images for the intent of mirroring the functionality of the [hopecore bot](hopecore_bot_demo.md) I created. It's designed to showcase simple yet effective use of HTML, CSS, and JavaScript for creating dynamic and interactive web applications.
 
 ---
 
